@@ -13,20 +13,7 @@
   <property name="windowTitle">
    <string>Widget</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
-   <item>
-    <widget class="QLCDNumber" name="lcdNumber"/>
-   </item>
-   <item>
-    <widget class="QSpinBox" name="spinBox">
-     <property name="minimum">
-      <number>-100</number>
-     </property>
-     <property name="maximum">
-      <number>100</number>
-     </property>
-    </widget>
-   </item>
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QSlider" name="horizontalSlider">
      <property name="minimum">
@@ -39,6 +26,19 @@
       <enum>Qt::Orientation::Horizontal</enum>
      </property>
     </widget>
+   </item>
+   <item>
+    <widget class="QSpinBox" name="spinBox">
+     <property name="minimum">
+      <number>-100</number>
+     </property>
+     <property name="maximum">
+      <number>100</number>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLCDNumber" name="lcdNumber"/>
    </item>
   </layout>
  </widget>
