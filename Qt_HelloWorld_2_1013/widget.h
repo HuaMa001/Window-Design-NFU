@@ -2,6 +2,8 @@
 #define WIDGET_H
 
 #include <QWidget>
+class  QPushButton;
+
 
 class Widget : public QWidget
 {
@@ -10,5 +12,7 @@ class Widget : public QWidget
 public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
+private:
+    QPushButton *helloButton;
 };
 #endif // WIDGET_H
