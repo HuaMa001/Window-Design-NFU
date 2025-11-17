@@ -1,5 +1,4 @@
-QT += core gui network widgets
-
+QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -11,12 +10,18 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    tcpfilesender.cpp
+    mainwindow.cpp
 
 HEADERS += \
-    tcpfilesender.h
+    mainwindow.h
+
+FORMS += \
+    mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    loginUI.qrc
