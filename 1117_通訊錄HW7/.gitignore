@@ -72,6 +72,7 @@ CMakeLists.txt.user*
 # --------
 *.dll
 *.exe
+1117
 
 # Directories with generated files
 .moc/

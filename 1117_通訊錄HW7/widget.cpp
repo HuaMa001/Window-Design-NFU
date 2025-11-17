@@ -4,6 +4,12 @@
 #include <QDebug>
 #include <QTextStream>
 #include <QFileDialog>
+#include <QPropertyAnimation>
+#include <QGraphicsOpacityEffect>
+#include <QParallelAnimationGroup>
+#include <QSequentialAnimationGroup>
+#include <QEasingCurve>
+#include <QTimer>
 
 
 
@@ -19,6 +25,43 @@ void writeString(QString Filename,QString str)
     out<<str; //文字輸出
     out.flush(); //清空緩衝區
 
+}
+
+// 按鈕點擊動畫效果
+void animateButton(QPushButton* button)
+{
+    QPropertyAnimation *animation = new QPropertyAnimation(button, "geometry");
+    animation->setDuration(100);
+    
+    QRect startRect = button->geometry();
+    QRect smallerRect = startRect.adjusted(5, 5, -5, -5);
+    
+    animation->setStartValue(startRect);
+    animation->setKeyValueAt(0.5, smallerRect);
+    animation->setEndValue(startRect);
+    animation->setEasingCurve(QEasingCurve::InOutQuad);
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+// 表格行新增動畫效果
+void animateTableRow(QTableWidget* table, int row)
+{
+    // 為新增的行設置透明度效果
+    for (int col = 0; col < table->columnCount(); col++)
+    {
+        QTableWidgetItem* item = table->item(row, col);
+        if (item)
+        {
+            // 創建一個短暫的背景色變化效果
+            QBrush originalBrush = item->background();
+            item->setBackground(QBrush(QColor(76, 175, 80, 100))); // 淡綠色高亮
+            
+            // 使用QTimer在一段時間後恢復原始背景
+            QTimer::singleShot(500, [item, originalBrush]() {
+                item->setBackground(originalBrush);
+            });
+        }
+    }
 }
 
 Widget::Widget(QWidget *parent)
@@ -41,6 +84,9 @@ Widget::~Widget()
 
 void Widget::on_pushButton_clicked()
 {
+    // 按鈕點擊動畫
+    animateButton(ui->pushButton);
+    
     QTableWidgetItem *col1,*col2,*col3,*col4;
     col1=new QTableWidgetItem(QString(ui->lineEdit->text()));
     col2=new QTableWidgetItem(QString(ui->lineEdit_2->text()));
@@ -54,11 +100,23 @@ void Widget::on_pushButton_clicked()
     ui->tableWidget->setItem(rc,1,col2);
     ui->tableWidget->setItem(rc,2,col3);
     ui->tableWidget->setItem(rc,3,col4);
+    
+    // 新增行動畫效果
+    animateTableRow(ui->tableWidget, rc);
+    
+    // 清空輸入框
+    ui->lineEdit->clear();
+    ui->lineEdit_2->clear();
+    ui->lineEdit_3->clear();
+    ui->lineEdit_4->clear();
 }
 
 
 void Widget::on_pushButton_2_clicked()
 {
+    // 按鈕點擊動畫
+    animateButton(ui->pushButton_2);
+    
     QString saveFile="";
     int rc,cc;
     rc=ui->tableWidget->rowCount();
@@ -82,6 +140,8 @@ void Widget::on_pushButton_2_clicked()
 
 void Widget::on_pushButton_3_clicked()
 {
+    // 按鈕點擊動畫
+    animateButton(ui->pushButton_3);
 
     // 1. 出現檔案選擇視窗，讓使用者選要讀取的檔案
     QString Filename = QFileDialog::getOpenFileName(
@@ -129,6 +189,12 @@ void Widget::on_pushButton_3_clicked()
             QTableWidgetItem *item = new QTableWidgetItem(parts[col]);
             ui->tableWidget->setItem(row, col, item);
         }
+        
+        // 為每一行添加動畫效果（延遲執行以產生漸進效果）
+        QTimer::singleShot(row * 50, [this, row]() {
+            if (row < ui->tableWidget->rowCount())
+                animateTableRow(ui->tableWidget, row);
+        });
 
         // 11. 要寫下一列了
         row++;
@@ -143,7 +209,10 @@ void Widget::on_pushButton_3_clicked()
 
 void Widget::on_pushButton_4_clicked()
 {
-    Widget::on_pushButton_clicked();
-    close();
+    // 按鈕點擊動畫
+    animateButton(ui->pushButton_4);
+    
+    // 延遲關閉以顯示動畫效果
+    QTimer::singleShot(150, this, &Widget::close);
 }
 
