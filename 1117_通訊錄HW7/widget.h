@@ -26,6 +26,8 @@ private slots:
     void on_btnEdit_clicked();
     void on_btnClear_clicked();
     void on_lineEditSearch_textChanged(const QString &text);
+    void on_tableWidget_itemDoubleClicked(QTableWidgetItem *item);
+    void on_tableWidget_itemSelectionChanged();
 
 private:
     Ui::Widget *ui;
@@ -36,5 +38,6 @@ private:
     void showErrorMessage(const QString &message);
     void showInfoMessage(const QString &message);
     void loadRowToInputs(int row);
+    void updateStatusBar();
 };
 #endif // WIDGET_H

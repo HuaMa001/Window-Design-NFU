@@ -43,6 +43,18 @@ Widget::Widget(QWidget *parent)
     
     // Connect search functionality
     connect(ui->lineEditSearch, &QLineEdit::textChanged, this, &Widget::on_lineEditSearch_textChanged);
+    
+    // Connect double-click to load data for editing
+    connect(ui->tableWidget, &QTableWidget::itemDoubleClicked, this, &Widget::on_tableWidget_itemDoubleClicked);
+    
+    // Connect selection change to update status
+    connect(ui->tableWidget, &QTableWidget::itemSelectionChanged, this, &Widget::on_tableWidget_itemSelectionChanged);
+    
+    // Set window icon and style
+    setWindowFlags(windowFlags() & ~Qt::WindowMaximizeButtonHint);
+    
+    // Initial status update
+    updateStatusBar();
 }
 
 Widget::~Widget()
@@ -154,6 +166,7 @@ void Widget::on_btnAdd_clicked()
     ui->tableWidget->setItem(rc, 3, col4);
     
     clearInputs();
+    updateStatusBar();
     showInfoMessage("新增成功！");
 }
 
@@ -253,6 +266,7 @@ void Widget::on_btnImport_clicked()
     }
 
     file.close();
+    updateStatusBar();
     showInfoMessage(QString("成功匯入 %1 筆資料！").arg(importedCount));
 }
 
@@ -288,6 +302,7 @@ void Widget::on_btnDelete_clicked()
     if(reply == QMessageBox::Yes)
     {
         ui->tableWidget->removeRow(currentRow);
+        updateStatusBar();
         showInfoMessage("刪除成功！");
     }
 }
@@ -326,6 +341,7 @@ void Widget::on_btnEdit_clicked()
     ui->tableWidget->item(currentRow, 3)->setText(ui->lineEdit_4->text().trimmed());
     
     clearInputs();
+    updateStatusBar();
     showInfoMessage("修改成功！");
 }
 
@@ -361,5 +377,56 @@ void Widget::on_lineEditSearch_textChanged(const QString &text)
         
         ui->tableWidget->setRowHidden(i, !match);
     }
+    
+    updateStatusBar();
+}
+
+void Widget::on_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
+{
+    if(!item)
+        return;
+    
+    int row = item->row();
+    loadRowToInputs(row);
+    
+    // Show a message to indicate edit mode
+    ui->lineEdit->setFocus();
+}
+
+void Widget::on_tableWidget_itemSelectionChanged()
+{
+    updateStatusBar();
+}
+
+void Widget::updateStatusBar()
+{
+    int totalRows = ui->tableWidget->rowCount();
+    int visibleRows = 0;
+    
+    for(int i = 0; i < totalRows; i++)
+    {
+        if(!ui->tableWidget->isRowHidden(i))
+            visibleRows++;
+    }
+    
+    int selectedRow = ui->tableWidget->currentRow();
+    
+    QString status;
+    if(selectedRow >= 0)
+    {
+        status = QString("共 %1 筆資料 | 顯示 %2 筆 | 已選擇第 %3 列")
+                     .arg(totalRows)
+                     .arg(visibleRows)
+                     .arg(selectedRow + 1);
+    }
+    else
+    {
+        status = QString("共 %1 筆資料 | 顯示 %2 筆")
+                     .arg(totalRows)
+                     .arg(visibleRows);
+    }
+    
+    // Update window title with status
+    setWindowTitle(QString("通訊錄管理系統 - %1").arg(status));
 }
 

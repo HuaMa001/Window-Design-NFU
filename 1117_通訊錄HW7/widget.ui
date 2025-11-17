@@ -148,40 +148,53 @@
      <item>
       <widget class="QPushButton" name="btnAdd">
        <property name="text">
-        <string>新增</string>
+        <string>新增(&amp;A)</string>
        </property>
        <property name="toolTip">
-        <string>新增聯絡人到列表</string>
+        <string>新增聯絡人到列表 (Alt+A)</string>
+       </property>
+       <property name="shortcut">
+        <string>Alt+A</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btnEdit">
        <property name="text">
-        <string>修改</string>
+        <string>修改(&amp;E)</string>
        </property>
        <property name="toolTip">
-        <string>修改選中的聯絡人</string>
+        <string>修改選中的聯絡人 (Alt+E)</string>
        </property>
+       <property name="shortcut">
+        <string>Alt+E</string>
+       </property>
+      </widget>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btnDelete">
        <property name="text">
-        <string>刪除</string>
+        <string>刪除(&amp;D)</string>
        </property>
        <property name="toolTip">
-        <string>刪除選中的聯絡人</string>
+        <string>刪除選中的聯絡人 (Delete)</string>
+       </property>
+       <property name="shortcut">
+        <string>Del</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btnClear">
        <property name="text">
-        <string>清空</string>
+        <string>清空(&amp;C)</string>
        </property>
        <property name="toolTip">
-        <string>清空輸入欄位</string>
+        <string>清空輸入欄位 (Ctrl+L)</string>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+L</string>
        </property>
       </widget>
      </item>
@@ -201,30 +214,39 @@
      <item>
       <widget class="QPushButton" name="btnExport">
        <property name="text">
-        <string>匯出</string>
+        <string>匯出(&amp;S)</string>
        </property>
        <property name="toolTip">
-        <string>匯出聯絡人到CSV檔案</string>
+        <string>匯出聯絡人到CSV檔案 (Ctrl+S)</string>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+S</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btnImport">
        <property name="text">
-        <string>匯入</string>
+        <string>匯入(&amp;O)</string>
        </property>
        <property name="toolTip">
-        <string>從CSV檔案匯入聯絡人</string>
+        <string>從CSV檔案匯入聯絡人 (Ctrl+O)</string>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+O</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btnExit">
        <property name="text">
-        <string>結束</string>
+        <string>結束(&amp;X)</string>
        </property>
        <property name="toolTip">
-        <string>結束程式</string>
+        <string>結束程式 (Ctrl+Q)</string>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+Q</string>
        </property>
       </widget>
      </item>
