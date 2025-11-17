@@ -4,21 +4,20 @@
 #include <QDebug>
 #include <QTextStream>
 #include <QFileDialog>
-
-
+#include <QMessageBox>
 
 void writeString(QString Filename,QString str)
 {
     QFile mFile(Filename);
-    if(! mFile.open(QFile::WriteOnly | QFile::Text))//如果開檔失敗
+    if(! mFile.open(QFile::WriteOnly | QFile::Text))
     {
-        qDebug()<<"Error";
+        qDebug()<<"Error opening file for writing";
         return;
     }
-    QTextStream out(&mFile);//out: 文字串流物件-->mFile:檔案物件
-    out<<str; //文字輸出
-    out.flush(); //清空緩衝區
-
+    QTextStream out(&mFile);
+    out<<str;
+    out.flush();
+    mFile.close();
 }
 
 Widget::Widget(QWidget *parent)
@@ -26,11 +25,24 @@ Widget::Widget(QWidget *parent)
     , ui(new Ui::Widget)
 {
     ui->setupUi(this);
+    
+    // Setup table widget
     QStringList colTitle;
     ui->tableWidget->setColumnCount(4);
     colTitle<<"學號"<<"班級"<<"姓名"<<"電話";
     ui->tableWidget->setHorizontalHeaderLabels(colTitle);
-
+    
+    // Set column widths
+    ui->tableWidget->setColumnWidth(0, 150);
+    ui->tableWidget->setColumnWidth(1, 150);
+    ui->tableWidget->setColumnWidth(2, 150);
+    ui->tableWidget->setColumnWidth(3, 200);
+    
+    // Enable alternating row colors for better readability
+    ui->tableWidget->setAlternatingRowColors(true);
+    
+    // Connect search functionality
+    connect(ui->lineEditSearch, &QLineEdit::textChanged, this, &Widget::on_lineEditSearch_textChanged);
 }
 
 Widget::~Widget()
@@ -38,112 +50,316 @@ Widget::~Widget()
     delete ui;
 }
 
-
-void Widget::on_pushButton_clicked()
+bool Widget::validateInputs()
 {
-    QTableWidgetItem *col1,*col2,*col3,*col4;
-    col1=new QTableWidgetItem(QString(ui->lineEdit->text()));
-    col2=new QTableWidgetItem(QString(ui->lineEdit_2->text()));
-    col3=new QTableWidgetItem(QString(ui->lineEdit_3->text()));
-    col4=new QTableWidgetItem(QString(ui->lineEdit_4->text()));
-
-    int rc=ui->tableWidget->rowCount();
-    ui->tableWidget->insertRow(rc);
-
-    ui->tableWidget->setItem(rc,0,col1);
-    ui->tableWidget->setItem(rc,1,col2);
-    ui->tableWidget->setItem(rc,2,col3);
-    ui->tableWidget->setItem(rc,3,col4);
+    if(ui->lineEdit->text().trimmed().isEmpty())
+    {
+        showErrorMessage("請輸入學號！");
+        ui->lineEdit->setFocus();
+        return false;
+    }
+    
+    if(ui->lineEdit_2->text().trimmed().isEmpty())
+    {
+        showErrorMessage("請輸入班級！");
+        ui->lineEdit_2->setFocus();
+        return false;
+    }
+    
+    if(ui->lineEdit_3->text().trimmed().isEmpty())
+    {
+        showErrorMessage("請輸入姓名！");
+        ui->lineEdit_3->setFocus();
+        return false;
+    }
+    
+    if(ui->lineEdit_4->text().trimmed().isEmpty())
+    {
+        showErrorMessage("請輸入電話號碼！");
+        ui->lineEdit_4->setFocus();
+        return false;
+    }
+    
+    return true;
 }
 
-
-void Widget::on_pushButton_2_clicked()
+void Widget::clearInputs()
 {
-    QString saveFile="";
-    int rc,cc;
-    rc=ui->tableWidget->rowCount();
-    cc=ui->tableWidget->columnCount();
+    ui->lineEdit->clear();
+    ui->lineEdit_2->clear();
+    ui->lineEdit_3->clear();
+    ui->lineEdit_4->clear();
+    ui->lineEdit->setFocus();
+}
 
-    QString mFilename=QFileDialog::getSaveFileName(this,"存檔",",");
+void Widget::showErrorMessage(const QString &message)
+{
+    QMessageBox::warning(this, "錯誤", message);
+}
 
-    for(int i=0;i<rc;i++)
+void Widget::showInfoMessage(const QString &message)
+{
+    QMessageBox::information(this, "訊息", message);
+}
+
+void Widget::loadRowToInputs(int row)
+{
+    if(row < 0 || row >= ui->tableWidget->rowCount())
+        return;
+    
+    QTableWidgetItem *item;
+    
+    item = ui->tableWidget->item(row, 0);
+    ui->lineEdit->setText(item ? item->text() : "");
+    
+    item = ui->tableWidget->item(row, 1);
+    ui->lineEdit_2->setText(item ? item->text() : "");
+    
+    item = ui->tableWidget->item(row, 2);
+    ui->lineEdit_3->setText(item ? item->text() : "");
+    
+    item = ui->tableWidget->item(row, 3);
+    ui->lineEdit_4->setText(item ? item->text() : "");
+}
+
+void Widget::on_btnAdd_clicked()
+{
+    if(!validateInputs())
+        return;
+    
+    // Check for duplicate student ID
+    QString studentId = ui->lineEdit->text().trimmed();
+    for(int i = 0; i < ui->tableWidget->rowCount(); i++)
     {
-        for(int j=0;j<cc;j++)
+        QTableWidgetItem *item = ui->tableWidget->item(i, 0);
+        if(item && item->text() == studentId)
         {
-            saveFile += ui->tableWidget->item(i, j)->text();
+            showErrorMessage("該學號已存在！");
+            return;
+        }
+    }
+    
+    QTableWidgetItem *col1, *col2, *col3, *col4;
+    col1 = new QTableWidgetItem(ui->lineEdit->text().trimmed());
+    col2 = new QTableWidgetItem(ui->lineEdit_2->text().trimmed());
+    col3 = new QTableWidgetItem(ui->lineEdit_3->text().trimmed());
+    col4 = new QTableWidgetItem(ui->lineEdit_4->text().trimmed());
+
+    int rc = ui->tableWidget->rowCount();
+    ui->tableWidget->insertRow(rc);
+
+    ui->tableWidget->setItem(rc, 0, col1);
+    ui->tableWidget->setItem(rc, 1, col2);
+    ui->tableWidget->setItem(rc, 2, col3);
+    ui->tableWidget->setItem(rc, 3, col4);
+    
+    clearInputs();
+    showInfoMessage("新增成功！");
+}
+
+void Widget::on_btnExport_clicked()
+{
+    if(ui->tableWidget->rowCount() == 0)
+    {
+        showErrorMessage("沒有資料可以匯出！");
+        return;
+    }
+    
+    QString saveFile = "";
+    int rc = ui->tableWidget->rowCount();
+    int cc = ui->tableWidget->columnCount();
+
+    QString mFilename = QFileDialog::getSaveFileName(this, "儲存檔案", "", "CSV檔案 (*.csv)");
+    
+    if(mFilename.isEmpty())
+        return;
+
+    for(int i = 0; i < rc; i++)
+    {
+        for(int j = 0; j < cc; j++)
+        {
+            QTableWidgetItem *item = ui->tableWidget->item(i, j);
+            saveFile += item ? item->text() : "";
             if (j < cc - 1)
                 saveFile += ",";
         }
-        saveFile+='\n';
+        saveFile += '\n';
     }
-    writeString(mFilename,saveFile);
+    
+    writeString(mFilename, saveFile);
+    showInfoMessage("匯出成功！");
 }
 
-
-void Widget::on_pushButton_3_clicked()
+void Widget::on_btnImport_clicked()
 {
-
-    // 1. 出現檔案選擇視窗，讓使用者選要讀取的檔案
     QString Filename = QFileDialog::getOpenFileName(
         this,
-        "讀取資料",                     // 視窗標題
-        ""                            // 預設路徑
-        );
+        "讀取資料",
+        "",
+        "CSV檔案 (*.csv);;所有檔案 (*.*)"
+    );
 
-    // 2. 如果使用者按「取消」，Filename 就是空字串，直接結束
     if (Filename.isEmpty())
         return;
 
-    // 3. 用使用者選的檔名建立 QFile 物件
     QFile file(Filename);
 
-    // 4. 嘗試開啟檔案（唯讀模式、純文字）
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug()<<"Error";
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        showErrorMessage("無法開啟檔案！");
         return;
     }
 
-    // 5. 清空 tableWidget，準備載入新資料
+    // Confirm before clearing existing data
+    if(ui->tableWidget->rowCount() > 0)
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "確認", "匯入將清空現有資料，是否繼續？",
+                                      QMessageBox::Yes | QMessageBox::No);
+        if(reply == QMessageBox::No)
+        {
+            file.close();
+            return;
+        }
+    }
+
     ui->tableWidget->setRowCount(0);
 
-    // 6. 用 QTextStream 讀取文字
     QTextStream in(&file);
     int row = 0;
+    int importedCount = 0;
 
-    // 7. 一行一行讀取，直到檔案結束
     while (!in.atEnd())
     {
-        QString line = in.readLine().trimmed();  // 讀一行並去掉前後空白
+        QString line = in.readLine().trimmed();
         if(line.isEmpty())
-            continue;  // 空行跳過
+            continue;
 
-        // 8. 用逗號分割 CSV 欄位
         QStringList parts = line.split(",");
+        
+        if(parts.size() < 4)
+            continue;
 
-        // 9. 新增一列到 tableWidget
         ui->tableWidget->insertRow(row);
 
-        // 10. 把每一個欄位的資料放到該列
-        for(int col = 0; col < parts.size(); col++)
+        for(int col = 0; col < 4 && col < parts.size(); col++)
         {
-            QTableWidgetItem *item = new QTableWidgetItem(parts[col]);
+            QTableWidgetItem *item = new QTableWidgetItem(parts[col].trimmed());
             ui->tableWidget->setItem(row, col, item);
         }
 
-        // 11. 要寫下一列了
         row++;
+        importedCount++;
     }
 
-    // 12. 關閉檔案
     file.close();
-    }
+    showInfoMessage(QString("成功匯入 %1 筆資料！").arg(importedCount));
+}
 
-
-
-
-void Widget::on_pushButton_4_clicked()
+void Widget::on_btnExit_clicked()
 {
-    Widget::on_pushButton_clicked();
-    close();
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "確認", "確定要結束程式嗎？",
+                                  QMessageBox::Yes | QMessageBox::No);
+    if(reply == QMessageBox::Yes)
+    {
+        close();
+    }
+}
+
+void Widget::on_btnDelete_clicked()
+{
+    int currentRow = ui->tableWidget->currentRow();
+    
+    if(currentRow < 0)
+    {
+        showErrorMessage("請先選擇要刪除的項目！");
+        return;
+    }
+    
+    QTableWidgetItem *nameItem = ui->tableWidget->item(currentRow, 2);
+    QString name = nameItem ? nameItem->text() : "此項目";
+    
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "確認刪除", 
+                                  QString("確定要刪除「%1」嗎？").arg(name),
+                                  QMessageBox::Yes | QMessageBox::No);
+    
+    if(reply == QMessageBox::Yes)
+    {
+        ui->tableWidget->removeRow(currentRow);
+        showInfoMessage("刪除成功！");
+    }
+}
+
+void Widget::on_btnEdit_clicked()
+{
+    int currentRow = ui->tableWidget->currentRow();
+    
+    if(currentRow < 0)
+    {
+        showErrorMessage("請先選擇要修改的項目！");
+        return;
+    }
+    
+    if(!validateInputs())
+        return;
+    
+    // Check for duplicate student ID (excluding current row)
+    QString studentId = ui->lineEdit->text().trimmed();
+    for(int i = 0; i < ui->tableWidget->rowCount(); i++)
+    {
+        if(i == currentRow)
+            continue;
+            
+        QTableWidgetItem *item = ui->tableWidget->item(i, 0);
+        if(item && item->text() == studentId)
+        {
+            showErrorMessage("該學號已存在！");
+            return;
+        }
+    }
+    
+    ui->tableWidget->item(currentRow, 0)->setText(ui->lineEdit->text().trimmed());
+    ui->tableWidget->item(currentRow, 1)->setText(ui->lineEdit_2->text().trimmed());
+    ui->tableWidget->item(currentRow, 2)->setText(ui->lineEdit_3->text().trimmed());
+    ui->tableWidget->item(currentRow, 3)->setText(ui->lineEdit_4->text().trimmed());
+    
+    clearInputs();
+    showInfoMessage("修改成功！");
+}
+
+void Widget::on_btnClear_clicked()
+{
+    clearInputs();
+}
+
+void Widget::on_lineEditSearch_textChanged(const QString &text)
+{
+    QString searchText = text.trimmed().toLower();
+    
+    for(int i = 0; i < ui->tableWidget->rowCount(); i++)
+    {
+        bool match = false;
+        
+        if(searchText.isEmpty())
+        {
+            match = true;
+        }
+        else
+        {
+            // Search in student ID (column 0) and name (column 2)
+            QTableWidgetItem *idItem = ui->tableWidget->item(i, 0);
+            QTableWidgetItem *nameItem = ui->tableWidget->item(i, 2);
+            
+            if((idItem && idItem->text().toLower().contains(searchText)) ||
+               (nameItem && nameItem->text().toLower().contains(searchText)))
+            {
+                match = true;
+            }
+        }
+        
+        ui->tableWidget->setRowHidden(i, !match);
+    }
 }
 

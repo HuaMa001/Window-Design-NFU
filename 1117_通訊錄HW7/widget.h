@@ -18,15 +18,23 @@ public:
     ~Widget();
 
 private slots:
-    void on_pushButton_clicked();
-
-    void on_pushButton_2_clicked();
-
-    void on_pushButton_3_clicked();
-
-    void on_pushButton_4_clicked();
+    void on_btnAdd_clicked();
+    void on_btnExport_clicked();
+    void on_btnImport_clicked();
+    void on_btnExit_clicked();
+    void on_btnDelete_clicked();
+    void on_btnEdit_clicked();
+    void on_btnClear_clicked();
+    void on_lineEditSearch_textChanged(const QString &text);
 
 private:
     Ui::Widget *ui;
+    
+    // Helper functions
+    bool validateInputs();
+    void clearInputs();
+    void showErrorMessage(const QString &message);
+    void showInfoMessage(const QString &message);
+    void loadRowToInputs(int row);
 };
 #endif // WIDGET_H
