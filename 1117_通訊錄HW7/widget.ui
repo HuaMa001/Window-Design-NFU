@@ -11,14 +11,125 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Widget</string>
+   <string>通訊錄管理系統</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget {
+    background-color: #f5f5f5;
+}
+
+QLabel {
+    color: #333333;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+QLineEdit {
+    padding: 8px;
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+    background-color: white;
+    font-size: 13px;
+}
+
+QLineEdit:focus {
+    border: 2px solid #4CAF50;
+}
+
+QPushButton {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    background-color: #4CAF50;
+}
+
+QPushButton:hover {
+    background-color: #45a049;
+}
+
+QPushButton:pressed {
+    background-color: #3d8b40;
+}
+
+QPushButton#pushButton_2 {
+    background-color: #2196F3;
+}
+
+QPushButton#pushButton_2:hover {
+    background-color: #0b7dda;
+}
+
+QPushButton#pushButton_3 {
+    background-color: #FF9800;
+}
+
+QPushButton#pushButton_3:hover {
+    background-color: #e68900;
+}
+
+QPushButton#pushButton_4 {
+    background-color: #f44336;
+}
+
+QPushButton#pushButton_4:hover {
+    background-color: #da190b;
+}
+
+QTableWidget {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: white;
+    gridline-color: #e0e0e0;
+    selection-background-color: #4CAF50;
+}
+
+QTableWidget::item {
+    padding: 5px;
+}
+
+QTableWidget QHeaderView::section {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px;
+    border: none;
+    font-weight: bold;
+    font-size: 13px;
+}</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>15</number>
+   </property>
+   <property name="leftMargin">
+    <number>20</number>
+   </property>
+   <property name="topMargin">
+    <number>20</number>
+   </property>
+   <property name="rightMargin">
+    <number>20</number>
+   </property>
+   <property name="bottomMargin">
+    <number>20</number>
+   </property>
    <item>
-    <widget class="QTableWidget" name="tableWidget"/>
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
+     <property name="horizontalSpacing">
+      <number>15</number>
+     </property>
+     <property name="verticalSpacing">
+      <number>10</number>
+     </property>
      <item row="4" column="0">
       <widget class="QLabel" name="label_4">
        <property name="layoutDirection">
@@ -78,6 +189,9 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="spacing">
+      <number>10</number>
+     </property>
      <item>
       <widget class="QPushButton" name="pushButton">
        <property name="text">
