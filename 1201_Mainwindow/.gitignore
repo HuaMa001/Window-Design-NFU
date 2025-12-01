@@ -80,3 +80,9 @@ CMakeLists.txt.user*
 .rcc/
 .uic/
 /build*/
+
+# Generated moc files
+moc_predefs.h
+
+# Application binary
+1201_Mainwindow
