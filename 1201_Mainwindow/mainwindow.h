@@ -18,5 +18,10 @@ public:
 
 private slots:
     void on_actionScreenshot_triggered();
+    void on_actionSave_triggered();
+    void on_actionOpen_triggered();
+
+private:
+    QString currentFilePath;
 };
 #endif // MAINWINDOW_H

@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include <QPalette>
 #include <QColor>
+#include <QFile>
+#include <QTextStream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -27,6 +29,72 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 MainWindow::~MainWindow() {}
+
+void MainWindow::on_actionSave_triggered()
+{
+    QString fileName;
+    
+    // If we have a current file, save to it directly
+    if (!currentFilePath.isEmpty()) {
+        fileName = currentFilePath;
+    } else {
+        // Otherwise, ask user where to save
+        fileName = QFileDialog::getSaveFileName(this, 
+            tr("儲存檔案"), 
+            "", 
+            tr("文字檔案 (*.txt);;所有文件 (*)"));
+        
+        if (fileName.isEmpty()) {
+            return; // User cancelled
+        }
+        
+        // Save the file path for future saves
+        currentFilePath = fileName;
+    }
+    
+    // Open file for writing
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, tr("錯誤"), tr("無法開啟檔案進行寫入"));
+        return;
+    }
+    
+    // Write content to file
+    QTextStream out(&file);
+    out << textEdit->toPlainText();
+    file.close();
+}
+
+void MainWindow::on_actionOpen_triggered()
+{
+    // Open file dialog to select a file
+    QString fileName = QFileDialog::getOpenFileName(this, 
+        tr("開啟檔案"), 
+        "", 
+        tr("文字檔案 (*.txt);;所有文件 (*)"));
+    
+    if (fileName.isEmpty()) {
+        return; // User cancelled
+    }
+    
+    // Open file for reading
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, tr("錯誤"), tr("無法開啟檔案進行讀取"));
+        return;
+    }
+    
+    // Read content from file
+    QTextStream in(&file);
+    QString content = in.readAll();
+    file.close();
+    
+    // Set the content to the text edit
+    textEdit->setPlainText(content);
+    
+    // Save the file path for future saves
+    currentFilePath = fileName;
+}
 
 void MainWindow::on_actionScreenshot_triggered()
 {
