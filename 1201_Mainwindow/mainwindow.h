@@ -10,5 +10,9 @@ class MainWindow : public QMainWindow,public Ui_MainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+public slots:
+    void OpenTxtFile();
+    void SaveTxtFile();
 };
 #endif // MAINWINDOW_H

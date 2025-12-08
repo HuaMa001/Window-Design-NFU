@@ -13,7 +13,13 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QTextEdit" name="textEdit"/>
+    </item>
+   </layout>
+  </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
@@ -69,6 +75,10 @@
    <addaction name="action_5"/>
   </widget>
   <action name="actionNew">
+   <property name="icon">
+    <iconset resource="images/designwindow.qrc">
+     <normaloff>:/image/new.png</normaloff>:/image/new.png</iconset>
+   </property>
    <property name="text">
     <string>新增</string>
    </property>
@@ -77,6 +87,10 @@
    </property>
   </action>
   <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="images/designwindow.qrc">
+     <normaloff>:/image/open.png</normaloff>:/image/open.png</iconset>
+   </property>
    <property name="text">
     <string>開啟</string>
    </property>
@@ -93,6 +107,10 @@
    </property>
   </action>
   <action name="actionSave">
+   <property name="icon">
+    <iconset resource="images/designwindow.qrc">
+     <normaloff>:/image/save.png</normaloff>:/image/save.png</iconset>
+   </property>
    <property name="text">
     <string>儲存</string>
    </property>
@@ -101,6 +119,10 @@
    </property>
   </action>
   <action name="actionASave">
+   <property name="icon">
+    <iconset resource="images/designwindow.qrc">
+     <normaloff>:/image/asave.png</normaloff>:/image/asave.png</iconset>
+   </property>
    <property name="text">
     <string>另存</string>
    </property>
@@ -117,11 +139,19 @@
    </property>
   </action>
   <action name="action">
+   <property name="icon">
+    <iconset resource="images/designwindow.qrc">
+     <normaloff>:/image/undo.png</normaloff>:/image/undo.png</iconset>
+   </property>
    <property name="text">
     <string>還原</string>
    </property>
   </action>
   <action name="action_2">
+   <property name="icon">
+    <iconset resource="images/designwindow.qrc">
+     <normaloff>:/image/cut.png</normaloff>:/image/cut.png</iconset>
+   </property>
    <property name="text">
     <string>剪下</string>
    </property>
@@ -132,16 +162,26 @@
    </property>
   </action>
   <action name="action_4">
+   <property name="icon">
+    <iconset resource="images/designwindow.qrc">
+     <normaloff>:/image/copy.png</normaloff>:/image/copy.png</iconset>
+   </property>
    <property name="text">
     <string>複製</string>
    </property>
   </action>
   <action name="action_5">
+   <property name="icon">
+    <iconset resource="images/designwindow.qrc">
+     <normaloff>:/image/paste.png</normaloff>:/image/paste.png</iconset>
+   </property>
    <property name="text">
     <string>貼上</string>
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="images/designwindow.qrc"/>
+ </resources>
  <connections/>
 </ui>
