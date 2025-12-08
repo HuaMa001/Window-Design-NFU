@@ -7,8 +7,6 @@
 #include <QScreen>
 #include <QPixmap>
 #include <QMessageBox>
-#include <QFile>
-#include <QTextStream>
 #include "ui_mainwindow.h"
 class MainWindow : public QMainWindow,public Ui_MainWindow
 {

@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include <QPalette>
 #include <QColor>
+#include <QFile>
+#include <QTextStream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -61,8 +63,6 @@ void MainWindow::on_actionSave_triggered()
     QTextStream out(&file);
     out << textEdit->toPlainText();
     file.close();
-    
-    QMessageBox::information(this, tr("成功"), tr("檔案已儲存"));
 }
 
 void MainWindow::on_actionOpen_triggered()
@@ -94,8 +94,6 @@ void MainWindow::on_actionOpen_triggered()
     
     // Save the file path for future saves
     currentFilePath = fileName;
-    
-    QMessageBox::information(this, tr("成功"), tr("檔案已開啟"));
 }
 
 void MainWindow::on_actionScreenshot_triggered()
