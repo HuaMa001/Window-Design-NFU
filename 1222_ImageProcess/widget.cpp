@@ -99,7 +99,7 @@ void Widget::saveImage()
     if (fileName.isEmpty())
         return;
 
-    // 優先存已處理後的影像
+    
     QImage imgToSave = dstImg.isNull() ? srcImg : dstImg;
 
     if (!imgToSave.save(fileName))
