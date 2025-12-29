@@ -81,9 +81,7 @@ ImageProcess::ImageProcess(QWidget *parent)
     connect(rotateDial,SIGNAL(valueChanged(int)),this,SLOT(rotatedImage()));
     connect(saveButton, SIGNAL(clicked()), this, SLOT(saveImage()));
     connect(brushColorButton, SIGNAL(clicked()), this, SLOT(chooseBrushColor()));
-    connect(brushSizeSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](int value) {
-        brushSize = value;
-    });
+    connect(brushSizeSpinBox, SIGNAL(valueChanged(int)), this, SLOT(onBrushSizeChanged(int)));
     
     // Enable mouse tracking for the image label
     inWin->setMouseTracking(true);
@@ -147,39 +145,9 @@ void ImageProcess::chooseBrushColor()
     }
 }
 
-void ImageProcess::mousePressEvent(QMouseEvent *event)
+void ImageProcess::onBrushSizeChanged(int value)
 {
-    if (event->button() == Qt::LeftButton && inWin->underMouse())
-    {
-        // Map to inWin coordinates
-        QPoint pos = inWin->mapFrom(this, event->pos());
-        if (inWin->rect().contains(pos) && !srcImg.isNull())
-        {
-            isDrawing = true;
-            lastDrawPoint = pos;
-        }
-    }
-}
-
-void ImageProcess::mouseMoveEvent(QMouseEvent *event)
-{
-    if (isDrawing && (event->buttons() & Qt::LeftButton))
-    {
-        QPoint pos = inWin->mapFrom(this, event->pos());
-        if (!srcImg.isNull())
-        {
-            drawLineTo(pos);
-            lastDrawPoint = pos;
-        }
-    }
-}
-
-void ImageProcess::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::LeftButton && isDrawing)
-    {
-        isDrawing = false;
-    }
+    brushSize = value;
 }
 
 void ImageProcess::drawLineTo(const QPoint &endPoint)

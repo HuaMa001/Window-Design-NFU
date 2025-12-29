@@ -37,9 +37,6 @@ public:
     QImage dstImg;
 
 protected:
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
 
 private slots:
@@ -47,6 +44,7 @@ private slots:
     void rotatedImage();
     void saveImage();
     void chooseBrushColor();
+    void onBrushSizeChanged(int value);
     
 private:
     // Brush functionality

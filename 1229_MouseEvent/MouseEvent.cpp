@@ -183,15 +183,14 @@ void MouseEvent::mouseReleaseEvent(QMouseEvent *event)
             double scaleX = (double)img.width() / imgRect.width();
             double scaleY = (double)img.height() / imgRect.height();
             
-            // Adjust selection to account for toolbar and status bar
+            // Adjust selection to account for toolbar
             int toolbarHeight = fileTool->height();
-            int statusBarHeight = statusBar()->height();
             
             int adjY1 = y1 - toolbarHeight;
             int adjY2 = y2 - toolbarHeight;
             
             // Only process if selection is within image area
-            if (adjY1 >= 0 && adjY2 > 0)
+            if (adjY1 >= 0 && adjY2 >= 0)
             {
                 int imgX = qMax(0, (int)(x1 * scaleX));
                 int imgY = qMax(0, (int)(adjY1 * scaleY));
