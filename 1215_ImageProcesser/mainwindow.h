@@ -22,6 +22,7 @@ public:
 
 private slots:
     void showOpenFile();
+    //void showGeomtryTransform();
 
 private:
     QWidget *central;
@@ -32,5 +33,6 @@ private:
     QLabel *imgWin;
     QAction *openFileAction;
     QAction *exitAction;
+    QAction *geomtryAction;
 };
 #endif // MAINWINDOW_H

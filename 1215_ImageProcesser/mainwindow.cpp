@@ -1,8 +1,10 @@
 #include "mainwindow.h"
+//#include "widget.h"
 #include <QHBoxLayout>
 #include <QMenuBar>
 #include <QFileDialog>
 #include <QDebug>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -11,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     QHBoxLayout *mainLayout = new QHBoxLayout(central);
     imgWin = new QLabel();
     QPixmap *initPixmap = new QPixmap(300,200);
+    //gWin = new Widget();
     initPixmap->fill(QColor(255,255,255));
     imgWin->resize(300,200);
     imgWin->setScaledContents(true);
@@ -28,6 +31,7 @@ void MainWindow:: createMenu()
 {
     fileMenu= menuBar()->addMenu(tr("檔案 F"));
     fileMenu->addAction(openFileAction);
+    fileMenu->addAction(geomtryAction);
     fileMenu->addAction(exitAction);
 }
 void MainWindow:: createActions()
@@ -41,11 +45,18 @@ void MainWindow:: createActions()
     exitAction->setShortcut(tr("Crtl+Q"));
     exitAction->setStatusTip(tr("退出程式"));
     connect(exitAction,SIGNAL(triggered()),this,SLOT(close()));
+
+    geomtryAction = new QAction(tr("幾何轉換"));
+    geomtryAction->setShortcut(tr("Crtl+G"));
+    geomtryAction->setStatusTip(tr("影像幾何轉換"));
+    connect(geomtryAction,SIGNAL(triggered()),this,SLOT(showGeomtryTransform()));
+   // connect(exitAction,SIGNAL(triggered()),gWin,SLOT(close()));
 }
 void MainWindow:: createToolBars()
 {
     fileTool=addToolBar("file");
     fileTool->addAction(openFileAction);
+    fileTool->addAction( geomtryAction);
 }
 void MainWindow:: loadFile(QString filename)
 {
@@ -64,8 +75,15 @@ void MainWindow:: showOpenFile()
     }
     else
     {
-       MainWindow *newIPWin = new MainWindow();
+        MainWindow *newIPWin = new MainWindow();
         newIPWin->show();
-         newIPWin->loadFile(filename);
+        newIPWin->loadFile(filename);
     }
 }
+/*void MainWindow :: showGeomtryTransform()
+{
+    if(!img.isNull())
+    gWin->srcImg=img;
+    gWin->inWin->setPixmap(QPixmap::fromImage(gWin->srcImg));
+    gWin->show();
+}*/

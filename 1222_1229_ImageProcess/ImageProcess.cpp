@@ -1,10 +1,10 @@
-#include "widget.h"
+#include "ImageProcess.h"
 #include <QPixmap>
 #include <QPainter>
 #include <QFileDialog>
 #include <QMessageBox>
 
-Widget::Widget(QWidget *parent)
+ImageProcess::ImageProcess(QWidget *parent)
     : QWidget(parent)
 {
     mainLayout = new QHBoxLayout(this);
@@ -50,7 +50,7 @@ Widget::Widget(QWidget *parent)
     if(srcImg.isNull())
     {
         srcImg =initPixmap->toImage();
-         /*
+        /*
         QPixmap *initPixmap = new QPixmap(300,200);
         initPixmap ->fill(QColor(255,255,255));
         inWin->setPixmap(*initPixmap);*/
@@ -62,8 +62,8 @@ Widget::Widget(QWidget *parent)
 
 }
 
-Widget::~Widget() {}
-void Widget::mirrorImage()
+ImageProcess::~ImageProcess() {}
+void ImageProcess::mirrorImage()
 {
     bool H,V;
     if(srcImg.isNull())
@@ -73,7 +73,7 @@ void Widget::mirrorImage()
     dstImg=srcImg.mirrored(H,V);
     srcImg=dstImg;
 }
-void Widget::rotatedImage()
+void ImageProcess::rotatedImage()
 {
     QTransform tran;
     int angle;
@@ -84,7 +84,7 @@ void Widget::rotatedImage()
     dstImg = srcImg.transformed(tran);
     inWin->setPixmap(QPixmap::fromImage(dstImg));
 }
-void Widget::saveImage()
+void ImageProcess::saveImage()
 {
     if (dstImg.isNull() && srcImg.isNull())
         return;
@@ -99,7 +99,7 @@ void Widget::saveImage()
     if (fileName.isEmpty())
         return;
 
-    // 優先存已處理後的影像
+
     QImage imgToSave = dstImg.isNull() ? srcImg : dstImg;
 
     if (!imgToSave.save(fileName))

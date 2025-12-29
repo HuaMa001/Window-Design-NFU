@@ -1,5 +1,5 @@
-#ifndef WIDGET_H
-#define WIDGET_H
+#ifndef IMAGEPROCESS_H
+#define IMAGEPROCESS_H
 
 #include <QWidget>
 #include <QLabel>
@@ -11,13 +11,13 @@
 #include<QHBoxLayout>
 #include<QVBoxLayout>
 #include<QImage>
-class Widget : public QWidget
+class ImageProcess : public QWidget
 {
     Q_OBJECT
 
 public:
-    Widget(QWidget *parent = nullptr);
-    ~Widget();
+   ImageProcess(QWidget *parent = nullptr);
+    ~ImageProcess();
     QLabel *inWin;
     QGroupBox *mirrorGroup;
     QCheckBox *vCheckBox;
@@ -37,4 +37,4 @@ private slots:
     void rotatedImage();
     void saveImage();
 };
-#endif // WIDGET_H
+#endif // IMAGEPROCESS_H
