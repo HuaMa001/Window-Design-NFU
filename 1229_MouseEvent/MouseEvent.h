@@ -9,6 +9,8 @@
 #include <QToolBar>
 #include <QAction>
 #include <QImage>
+#include <QPoint>
+#include <QRect>
 
 class MouseEvent : public QMainWindow
 {
@@ -23,6 +25,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     void createActions();
@@ -47,6 +50,12 @@ private:
 
     QImage img;
     QString filename;
+    
+    // Mouse drag selection variables
+    bool isSelecting;
+    QPoint selectionStart;
+    QPoint selectionEnd;
+    QRect selectionRect;
 };
 
 #endif // MOUSEEVENT_H

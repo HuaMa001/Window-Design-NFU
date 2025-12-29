@@ -3,9 +3,11 @@
 #include <QDebug>
 #include <QFile>
 #include <QPixmap>
+#include <QPainter>
+#include <QPen>
 
 MouseEvent::MouseEvent(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent), isSelecting(false)
 {
     setWindowTitle(tr("測試視窗"));
 
@@ -122,13 +124,30 @@ void MouseEvent::mouseMoveEvent(QMouseEvent *event)
 {
     QString str = QString("(%1,%2)").arg(event->x()).arg(event->y());
     MousePosLabel->setText(str);
+    
+    // Update selection rectangle during drag
+    if (isSelecting && !img.isNull())
+    {
+        selectionEnd = event->pos();
+        update(); // Trigger repaint to show selection rectangle
+    }
 }
 
 void MouseEvent::mousePressEvent(QMouseEvent *event)
 {
     QString str = QString("(%1,%2)").arg(event->x()).arg(event->y());
     if (event->button() == Qt::LeftButton)
+    {
         statusBar()->showMessage(tr("左鍵") + str);
+        
+        // Start selection if image is loaded
+        if (!img.isNull())
+        {
+            isSelecting = true;
+            selectionStart = event->pos();
+            selectionEnd = event->pos();
+        }
+    }
     else if (event->button() == Qt::RightButton)
         statusBar()->showMessage(tr("右鍵") + str);
     else if (event->button() == Qt::MiddleButton)
@@ -139,10 +158,86 @@ void MouseEvent::mouseReleaseEvent(QMouseEvent *event)
 {
     QString str = QString("(%1,%2)").arg(event->x()).arg(event->y());
     statusBar()->showMessage(tr("釋放") + str);
+    
+    // Complete selection and zoom
+    if (isSelecting && event->button() == Qt::LeftButton && !img.isNull())
+    {
+        isSelecting = false;
+        selectionEnd = event->pos();
+        
+        // Calculate selection rectangle
+        int x1 = qMin(selectionStart.x(), selectionEnd.x());
+        int y1 = qMin(selectionStart.y(), selectionEnd.y());
+        int x2 = qMax(selectionStart.x(), selectionEnd.x());
+        int y2 = qMax(selectionStart.y(), selectionEnd.y());
+        
+        selectionRect = QRect(x1, y1, x2 - x1, y2 - y1);
+        
+        // Only zoom if selection is large enough
+        if (selectionRect.width() > 10 && selectionRect.height() > 10)
+        {
+            // Map selection from widget coordinates to image coordinates
+            QRect imgRect = imgWin->rect();
+            
+            // Calculate the actual image display area
+            double scaleX = (double)img.width() / imgRect.width();
+            double scaleY = (double)img.height() / imgRect.height();
+            
+            // Adjust selection to account for toolbar and status bar
+            int toolbarHeight = fileTool->height();
+            int statusBarHeight = statusBar()->height();
+            
+            int adjY1 = y1 - toolbarHeight;
+            int adjY2 = y2 - toolbarHeight;
+            
+            // Only process if selection is within image area
+            if (adjY1 >= 0 && adjY2 > 0)
+            {
+                int imgX = qMax(0, (int)(x1 * scaleX));
+                int imgY = qMax(0, (int)(adjY1 * scaleY));
+                int imgW = qMin(img.width() - imgX, (int)((x2 - x1) * scaleX));
+                int imgH = qMin(img.height() - imgY, (int)((adjY2 - adjY1) * scaleY));
+                
+                if (imgW > 0 && imgH > 0)
+                {
+                    // Extract and zoom the selected region
+                    QImage selectedRegion = img.copy(imgX, imgY, imgW, imgH);
+                    
+                    // Open geometry transform window with zoomed image
+                    gWin->srcImg = selectedRegion;
+                    gWin->inWin->setPixmap(QPixmap::fromImage(gWin->srcImg));
+                    gWin->show();
+                    
+                    statusBar()->showMessage(tr("已放大選取區域"));
+                }
+            }
+        }
+        
+        update(); // Clear selection rectangle
+    }
 }
 
 void MouseEvent::mouseDoubleClickEvent(QMouseEvent *event)
 {
     QString str = QString("(%1,%2)").arg(event->x()).arg(event->y());
     statusBar()->showMessage(tr("雙擊") + str);
+}
+
+void MouseEvent::paintEvent(QPaintEvent *event)
+{
+    QMainWindow::paintEvent(event);
+    
+    // Draw selection rectangle during drag
+    if (isSelecting && !img.isNull())
+    {
+        QPainter painter(this);
+        painter.setPen(QPen(Qt::blue, 2, Qt::DashLine));
+        
+        int x1 = qMin(selectionStart.x(), selectionEnd.x());
+        int y1 = qMin(selectionStart.y(), selectionEnd.y());
+        int x2 = qMax(selectionStart.x(), selectionEnd.x());
+        int y2 = qMax(selectionStart.y(), selectionEnd.y());
+        
+        painter.drawRect(x1, y1, x2 - x1, y2 - y1);
+    }
 }
