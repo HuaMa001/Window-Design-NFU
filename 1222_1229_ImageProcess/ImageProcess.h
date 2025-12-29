@@ -11,6 +11,10 @@
 #include<QHBoxLayout>
 #include<QVBoxLayout>
 #include<QImage>
+#include<QMouseEvent>
+#include<QColorDialog>
+#include<QSpinBox>
+
 class ImageProcess : public QWidget
 {
     Q_OBJECT
@@ -32,9 +36,27 @@ public:
     QImage srcImg;
     QImage dstImg;
 
+protected:
+    bool eventFilter(QObject *obj, QEvent *event) override;
+
 private slots:
     void mirrorImage();
     void rotatedImage();
     void saveImage();
+    void chooseBrushColor();
+    void onBrushSizeChanged(int value);
+    
+private:
+    // Brush functionality
+    bool isDrawing;
+    QPoint lastDrawPoint;
+    QColor brushColor;
+    int brushSize;
+    
+    QPushButton *brushColorButton;
+    QSpinBox *brushSizeSpinBox;
+    QGroupBox *brushGroup;
+    
+    void drawLineTo(const QPoint &endPoint);
 };
 #endif // IMAGEPROCESS_H
