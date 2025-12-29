@@ -99,11 +99,7 @@ void ImageProcess::saveImage()
     if (fileName.isEmpty())
         return;
 
-<<<<<<< HEAD:1222_1229_ImageProcess/ImageProcess.cpp
 
-=======
-    
->>>>>>> c4dc1e7297dacd1f38c4e416ea5a2f5d13c899cd:1222_ImageProcess/widget.cpp
     QImage imgToSave = dstImg.isNull() ? srcImg : dstImg;
 
     if (!imgToSave.save(fileName))
